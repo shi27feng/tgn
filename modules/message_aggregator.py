@@ -1,10 +1,11 @@
+from abc import ABC
 from collections import defaultdict
 
 import numpy as np
 import torch
 
 
-class MessageAggregator(torch.nn.Module):
+class MessageAggregator(torch.nn.Module, ABC):
     """
     Abstract class for the message aggregator module, which given a batch of node ids and
     corresponding messages, aggregates messages with the same node id.
@@ -33,7 +34,7 @@ class MessageAggregator(torch.nn.Module):
         return node_id_to_messages
 
 
-class LastMessageAggregator(MessageAggregator):
+class LastMessageAggregator(MessageAggregator, ABC):
     def __init__(self, device):
         super(LastMessageAggregator, self).__init__(device)
 
@@ -57,7 +58,7 @@ class LastMessageAggregator(MessageAggregator):
         return to_update_node_ids, unique_messages, unique_timestamps
 
 
-class MeanMessageAggregator(MessageAggregator):
+class MeanMessageAggregator(MessageAggregator, ABC):
     def __init__(self, device):
         super(MeanMessageAggregator, self).__init__(device)
 

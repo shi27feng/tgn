@@ -1,7 +1,9 @@
+from abc import ABC
+
 from torch import nn
 
 
-class MessageFunction(nn.Module):
+class MessageFunction(nn.Module, ABC):
     """
     Module which computes the message for a given interaction.
     """
@@ -10,7 +12,7 @@ class MessageFunction(nn.Module):
         return None
 
 
-class MLPMessageFunction(MessageFunction):
+class MLPMessageFunction(MessageFunction, ABC):
     def __init__(self, raw_message_dimension, message_dimension):
         super(MLPMessageFunction, self).__init__()
 
@@ -26,7 +28,7 @@ class MLPMessageFunction(MessageFunction):
         return messages
 
 
-class IdentityMessageFunction(MessageFunction):
+class IdentityMessageFunction(MessageFunction, ABC):
 
     def compute_message(self, raw_messages):
         return raw_messages

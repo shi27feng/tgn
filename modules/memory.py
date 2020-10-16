@@ -1,13 +1,19 @@
+from abc import ABC
 from collections import defaultdict
 
 import torch
 from torch import nn
 
 
-class Memory(nn.Module):
+class Memory(nn.Module, ABC):
 
-    def __init__(self, n_nodes, memory_dimension, input_dimension, message_dimension=None,
-                 device="cpu", combination_method='sum'):
+    def __init__(self, 
+                 n_nodes, 
+                 memory_dimension, 
+                 input_dimension, 
+                 message_dimension=None,
+                 device="cpu", 
+                 combination_method='sum'):
         super(Memory, self).__init__()
         self.n_nodes = n_nodes
         self.memory_dimension = memory_dimension
@@ -24,7 +30,8 @@ class Memory(nn.Module):
         Initializes the memory to all zeros. It should be called at the start of each epoch.
         """
         # Treat memory as parameter so that it is saved and loaded together with the model
-        self.memory = nn.Parameter(torch.zeros((self.n_nodes, self.memory_dimension)).to(self.device),
+        self.memory = nn.Parameter(torch.zeros((self.n_nodes, 
+                                                self.memory_dimension)).to(self.device),
                                    requires_grad=False)
         self.last_update = nn.Parameter(torch.zeros(self.n_nodes).to(self.device),
                                         requires_grad=False)
