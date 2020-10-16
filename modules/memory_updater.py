@@ -1,13 +1,15 @@
+from abc import ABC
+
 import torch
 from torch import nn
 
 
-class MemoryUpdater(nn.Module):
+class MemoryUpdater(nn.Module, ABC):
     def update_memory(self, unique_node_ids, unique_messages, timestamps):
         pass
 
 
-class SequenceMemoryUpdater(MemoryUpdater):
+class SequenceMemoryUpdater(MemoryUpdater, ABC):
     def __init__(self, memory, message_dimension, memory_dimension, device):
         super(SequenceMemoryUpdater, self).__init__()
         self.memory = memory
@@ -19,8 +21,8 @@ class SequenceMemoryUpdater(MemoryUpdater):
         if len(unique_node_ids) <= 0:
             return
 
-        assert (self.memory.get_last_update(unique_node_ids) <= timestamps).all().item(), "Trying to " \
-                                                                                          "update memory to time in the past"
+        assert (self.memory.get_last_update(unique_node_ids) <= timestamps).all().item(), \
+            "Trying to update memory to time in the past"
 
         memory = self.memory.get_memory(unique_node_ids)
         self.memory.last_update[unique_node_ids] = timestamps
@@ -31,10 +33,11 @@ class SequenceMemoryUpdater(MemoryUpdater):
 
     def get_updated_memory(self, unique_node_ids, unique_messages, timestamps):
         if len(unique_node_ids) <= 0:
-            return self.memory.memory.data.clone(), self.memory.last_update.data.clone()
+            return self.memory.memory.data.clone(),
+            self.memory.last_update.data.clone()
 
-        assert (self.memory.get_last_update(unique_node_ids) <= timestamps).all().item(), "Trying to " \
-                                                                                          "update memory to time in the past"
+        assert (self.memory.get_last_update(unique_node_ids) <= timestamps).all().item(), \
+            "Trying to update memory to time in the past"
 
         updated_memory = self.memory.memory.data.clone()
         updated_memory[unique_node_ids] = self.memory_updater(unique_messages, updated_memory[unique_node_ids])
@@ -45,17 +48,23 @@ class SequenceMemoryUpdater(MemoryUpdater):
         return updated_memory, updated_last_update
 
 
-class GRUMemoryUpdater(SequenceMemoryUpdater):
+class GRUMemoryUpdater(SequenceMemoryUpdater, ABC):
     def __init__(self, memory, message_dimension, memory_dimension, device):
-        super(GRUMemoryUpdater, self).__init__(memory, message_dimension, memory_dimension, device)
+        super(GRUMemoryUpdater, self).__init__(memory,
+                                               message_dimension,
+                                               memory_dimension,
+                                               device)
 
         self.memory_updater = nn.GRUCell(input_size=message_dimension,
                                          hidden_size=memory_dimension)
 
 
-class RNNMemoryUpdater(SequenceMemoryUpdater):
+class RNNMemoryUpdater(SequenceMemoryUpdater, ABC):
     def __init__(self, memory, message_dimension, memory_dimension, device):
-        super(RNNMemoryUpdater, self).__init__(memory, message_dimension, memory_dimension, device)
+        super(RNNMemoryUpdater, self).__init__(memory,
+                                               message_dimension,
+                                               memory_dimension,
+                                               device)
 
         self.memory_updater = nn.RNNCell(input_size=message_dimension,
                                          hidden_size=memory_dimension)

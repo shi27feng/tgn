@@ -1,8 +1,10 @@
+from abc import ABC
+
 import numpy as np
 import torch
 
 
-class TimeEncode(torch.nn.Module):
+class TimeEncode(torch.nn.Module, ABC):
     # Time Encoding proposed by TGAT
     def __init__(self, dimension):
         super(TimeEncode, self).__init__()
