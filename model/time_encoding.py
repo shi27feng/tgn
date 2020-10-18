@@ -3,7 +3,10 @@ from abc import ABC
 import numpy as np
 import torch
 
-
+""" 
+Time Encoding proposed by 
+[TGAT](https://github.com/StatsDLMathsRecomSys/Inductive-representation-learning-on-temporal-graphs)
+"""
 class TimeEncode(torch.nn.Module, ABC):
     # Time Encoding proposed by TGAT
     def __init__(self, dimension):
