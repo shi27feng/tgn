@@ -197,11 +197,11 @@ class GraphAttentionEmbedding(GraphEmbedding):
                                                       use_memory)
 
         self.attention_models = torch.nn.ModuleList([TemporalAttentionLayer(
-            n_node_features=n_node_features,
-            n_neighbors_features=n_node_features,
-            n_edge_features=n_edge_features,
+            num_node_features=n_node_features,
+            num_neighbors_features=n_node_features,
+            num_edge_features=n_edge_features,
             time_dim=n_time_features,
-            n_head=n_heads,
+            num_head=n_heads,
             dropout=dropout,
             output_dimension=n_node_features)
             for _ in range(n_layers)])

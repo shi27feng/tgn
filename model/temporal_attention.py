@@ -12,31 +12,41 @@ class TemporalAttentionLayer(torch.nn.Module, ABC):
      its neighbors and the edge timestamps.
     """
 
-    def __init__(self, n_node_features, n_neighbors_features, n_edge_features, time_dim,
-                 output_dimension, n_head=2,
+    def __init__(self,
+                 num_node_features,
+                 num_neighbors_features,
+                 num_edge_features,
+                 time_dim,
+                 output_dimension,
+                 num_head=2,
                  dropout=0.1):
         super(TemporalAttentionLayer, self).__init__()
 
-        self.n_head = n_head
+        self.num_head = num_head
 
-        self.feat_dim = n_node_features
+        self.feat_dim = num_node_features
         self.time_dim = time_dim
 
-        self.query_dim = n_node_features + time_dim
-        self.key_dim = n_neighbors_features + time_dim + n_edge_features
+        self.query_dim = num_node_features + time_dim
+        self.key_dim = num_neighbors_features + time_dim + num_edge_features
 
-        self.merger = MergeLayer(self.query_dim, n_node_features, n_node_features, output_dimension)
+        self.merger = MergeLayer(self.query_dim, num_node_features, num_node_features, output_dimension)
 
         self.multi_head_target = nn.MultiheadAttention(embed_dim=self.query_dim,
                                                        kdim=self.key_dim,
                                                        vdim=self.key_dim,
-                                                       num_heads=n_head,
+                                                       num_heads=num_head,
                                                        dropout=dropout)
 
-    def forward(self, src_node_features, src_time_features, neighbors_features,
-                neighbors_time_features, edge_features, neighbors_padding_mask):
+    def forward(self, 
+                src_node_features, 
+                src_time_features, 
+                neighbors_features,
+                neighbors_time_features, 
+                edge_features, 
+                neighbors_padding_mask):
         """
-        "Temporal attention model
+        "Temporal Attention Model
         :param src_node_features: float Tensor of shape [batch_size, n_node_features]
         :param src_time_features: float Tensor of shape [batch_size, 1, time_dim]
         :param neighbors_features: float Tensor of shape [batch_size, n_neighbors, n_node_features]
