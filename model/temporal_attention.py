@@ -22,16 +22,15 @@ class TemporalAttentionLayer(torch.nn.Module, ABC):
                  dropout=0.1):
         super(TemporalAttentionLayer, self).__init__()
 
+        # setting up dimensions
         self.num_head = num_head
-
         self.feat_dim = num_node_features
         self.time_dim = time_dim
-
         self.query_dim = num_node_features + time_dim
         self.key_dim = num_neighbors_features + time_dim + num_edge_features
 
+        # modules
         self.merger = MergeLayer(self.query_dim, num_node_features, num_node_features, output_dimension)
-
         self.multi_head_target = nn.MultiheadAttention(embed_dim=self.query_dim,
                                                        kdim=self.key_dim,
                                                        vdim=self.key_dim,

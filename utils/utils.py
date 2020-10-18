@@ -1,10 +1,15 @@
+from abc import ABC
+
 import numpy as np
 import torch
 import torch.nn as nn
 
 
-class MergeLayer(torch.nn.Module):
-    def __init__(self, dim1, dim2, dim3, dim4):
+class MergeLayer(torch.nn.Module, ABC):
+    def __init__(self,
+                 dim1, dim2,  # merging inputs' dimensions
+                 dim3,        # intermediate layer dimension
+                 dim4):       # output dimension
         super().__init__()
         self.fc1 = torch.nn.Linear(dim1 + dim2, dim3)
         self.fc2 = torch.nn.Linear(dim3, dim4)
@@ -19,7 +24,7 @@ class MergeLayer(torch.nn.Module):
         return self.fc2(h)
 
 
-class MLP(torch.nn.Module):
+class MLP(torch.nn.Module, ABC):
     def __init__(self, dim, drop=0.3):
         super().__init__()
         dims = [dim, 80, 10, 1]
